@@ -1,0 +1,114 @@
+# vim:ft=gitconfig:
+
+# Include with
+#[include]
+#path = "config-common"
+
+[color]
+ui = true
+[advice]
+skippedCherryPicks=false
+[branch]
+sort = -committerdate
+[column]
+ui = auto
+
+[alias]
+# https://github.blog/2019-08-16-highlights-from-git-2-23/
+s = switch
+sc = switch -c # Create branch
+r = restore
+p = push
+pf = push --force-with-lease
+puo = !sh -c 'git push -u origin $(git rev-parse --abbrev-ref HEAD)'
+pl = pull
+di = diff
+d = diff -U0
+dia = diff --name-only
+dc = diff --cached
+ad = add
+af = add -f
+l = log  --graph --pretty=oneline --abbrev-commit --decorate
+lm = log --graph --pretty=oneline --abbrev-commit -p --name-only
+lo = log --show-signature --graph --pretty=short
+los = log --show-signature --graph --pretty=short --stat
+loo = log --show-signature --pretty=fuller --graph --decorate --show-signature
+loc = log --author=me --show-signature --graph # Pour local
+lom = log --graph -p --name-only --show-signature
+re = rebase
+fuzzy-stash = !git stash list | fzf --no-multi --preview 'git stash show -p --stat --color=always {1}' --delimiter ': ' --bind 'enter:become(git stash pop {1})'
+co = checkout
+ci = commit -v # Pour afficher les différences
+cu = commit --fixup
+c = commit -a -v -F .git/draft # Pour utiliser un message défini dans un fichier
+cfa = commit -a -v -e -F .git/draft # Pour utiliser un message défini dans un fichier
+cf = commit -v -e -F cm.txt
+cm = commit -v -m
+ca = commit -v -a
+cr = commit -a -v -m # Pour un commit rapide
+st = status --short --branch
+stt = status --short --branch --ignored
+br = branch
+b = branch -a --no-merged @
+als = config --global --get-regexp alias
+amd = commit --amend -v
+ama = commit --amend -a -v -C HEAD # Réutiliser le message
+# Afficher l'état du dépôt
+gr = show-branch
+sha = log --pretty=tformat:'%H' -1
+lg = log --graph --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%an %ai)%Creset' --date=relative
+lgg = log --all --graph --pretty=tformat:'%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%an %ai)%Creset' --date=relative
+permission-reset = !git diff --no-ext-diff -p -R --no-color | grep -E '^(diff|(old|new) mode)' --color=never | git apply
+clean-merged-branch = !git branch -d $(git branch --merged| egrep -v '(^\\*|master|main|dev)' | sed 's/ //g')
+mr = !sh -c 'git fetch $1 merge-requests/$2/head:mr-$1-$2 && git checkout mr-$1-$2' -
+m  = merge
+jump = !sh ~/.config/git/jump.sh
+
+[rebase]
+stat = true
+# It can create very hairy conflicts, but life is short
+autoStash = true
+autoSquash = true
+# This could result in “backup” bracnch created in case of conflicts to be
+# updated, losing their backup usefulness. I rarely use this type of
+# branches anymore.
+updateRefs = true
+rescheduleFailedExec = true
+
+[color "diff-highlight"]
+oldNormal = red bold
+oldHighlight = red bold 52
+newNormal = green bold
+newHighlight = green bold 22
+[color "diff"]
+meta = yellow
+frag = magenta bold
+commit = yellow bold
+old = red bold
+new = green bold
+whitespace = red reverse
+
+[push]
+default = current
+# https://kdspaul.github.io/git/git-push/2022/07/17/git-push-larger-than-necessary-pack.html
+negociate = true
+followtags = true
+[status]
+submoduleSummary = true
+[submodule]
+recurse = true
+
+[diff]
+# mnemonicPrefix = true
+algorithm = histogram
+# Set via env, behaves better with tools like Magit
+# external = patdiff-git-wrapper
+[rerere]
+enabled = false
+[help]
+autocorrect = 30
+
+[pull]
+ff = only
+[init]
+defaultBranch = main
